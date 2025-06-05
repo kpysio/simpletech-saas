@@ -11,10 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('agencies', function (Blueprint $table) {
+        Schema::create('agency_tenant', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->enum('industry_type', ['recruitment', 'accounting', 'real_estate', 'crm']);
+            $table->foreignId('agency_id')->constrained()->onDelete('cascade');
+            $table->foreignId('tenant_id')->constrained()->onDelete('cascade');
             $table->timestamps();
         });
     }
@@ -24,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('agencies');
+        Schema::dropIfExists('agency_tenant');
     }
 };

@@ -31,9 +31,11 @@ class AccountingSeeder extends Seeder
            // Create Agency
         $agency = Agency::create([
             'name' => 'MultiPackage Agency',
-            'industry_type' => 'accounting', // main type
+            'tenant_type' => 'accounting', // main type
             'created_by' => 1, // will update after admin user is created
         ]);
+
+        
 
         // Create Admin User for Agency
         $adminUser = User::factory()->create([
@@ -102,58 +104,45 @@ class AccountingSeeder extends Seeder
             }
         }
 
+        // Create or fetch the tenant (e.g., accounting)
+        $tenant = \App\Models\Tenant::firstOrCreate(['type' => 'accounting']);
 
+        // Attach tenant to agency (many-to-many)
+        $agency->tenants()->syncWithoutDetaching([$tenant->id]);
 
-
-
-/*
-        // Create a user to be the agency creator
-        $user = User::factory()->create([
-            'name' => 'Accounting Owner',
-            'email' => 'owner@accounting.com',
+        // Create a task template for an agency and tenant
+        $taskTemplate = \App\Models\TaskTemplate::create([
+            'agency_id' => $agency->id,
+            'tenant_id' => $tenant->id,
+            'title' => 'VAT Return',
+            'category' => 'Accounting',
+            'description' => 'Prepare and file VAT return for the client.',
         ]);
 
-        $adminRole = Role::where('name', 'Admin')->first();
-        $user->roles()->attach($adminRole);
-
-        $agency = Agency::create([
-            'name' => 'Accounting Experts',
-            'industry_type' => 'accounting',
-            'created_by' => $user->id,
-        ]);
-
-        $branch = $agency->branches()->create([
-            'name' => 'Finance Branch',
-        ]);
-
-        $employees = Employee::factory(4)->create([
-            'branch_id' => $branch->id,
-        ]);
-
-        $categories = ['Corporation Tax', 'SA001', 'VAT'];
-
-        $accountantRole = Role::where('name', 'Accountant')->first();
-        foreach ($employees->take(3) as $accountant) {
-            $accountantUser = $accountant->user;
-            if ($accountantUser) {
-                $accountantUser->roles()->attach($accountantRole);
-            }
-            for ($j = 0; $j < 3; $j++) {
-                $client = $accountant->clients()->create([
-                    'name' => "Client {$j}",
-                    'department' => 'Finance',
-                ]);
-
-                foreach (range(1, 2) as $k) {
-                    $client->tasks()->create([
-                        'title' => ['VAT Return', 'SE001 Return', 'SA001 Return'][rand(0, 2)],
-                        'category' => $categories[rand(0, 2)],
-                        'due_date' => now()->addDays(rand(10, 30)),
-                        'status' => 'open'
-                    ]);
-                }
-            }
-        }
+        /**
+         * Example:
+         * \App\Models\TaskTemplate::create([
+         *     'agency_id' => $agency->id,
+         *     'tenant_id' => $tenant->id,
+         *     'title' => 'Corporation Tax Return',
+         *     'category' => 'Accounting',
+         *     'description' => 'Prepare and file Corporation Tax return for the client.',
+         * ]);
         */
+        \App\Models\TaskTemplate::create([
+            'agency_id' => $agency->id,
+            'tenant_id' => $tenant->id,
+            'title' => 'SA001 Return',
+            'category' => 'Accounting',
+            'description' => 'Prepare and file SA001 return for the client.',
+        ]);
+        \App\Models\TaskTemplate::create([
+            'agency_id' => $agency->id,
+            'tenant_id' => $tenant->id,
+            'title' => 'Corporation Tax Return',
+            'category' => 'Accounting',
+            'description' => 'Prepare and file Corporation Tax return for the client.',
+        ]);
+                    
     }
 }

@@ -30,7 +30,7 @@ class RealEstateSeeder extends Seeder
 
         $agency = Agency::create([
             'name' => 'Real Estate Group',
-            'industry_type' => 'real_estate',
+            'tenant_type' => 'real_estate',
             'created_by' => $user->id,
         ]);
 
@@ -66,5 +66,22 @@ class RealEstateSeeder extends Seeder
                 }
             }
         }
+
+         // Create or fetch the tenant (e.g., accounting)
+        $tenant = \App\Models\Tenant::firstOrCreate(['type' => 'real_estate']);
+
+        // Attach tenant to agency (many-to-many)
+        $agency->tenants()->syncWithoutDetaching([$tenant->id]);
+
+        // Create a task template for an agency and tenant
+        $taskTemplate = \App\Models\TaskTemplate::create([
+            'agency_id' => $agency->id,
+            'tenant_id' => $tenant->id,
+            'title' => 'Property Management',
+            'category' => 'Real Estate',
+            'description' => 'Prepare lead management for the client.',
+        ]);
+
+
     }
 }

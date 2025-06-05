@@ -17,4 +17,14 @@ class Agency extends Model
     {
         return $this->belongsTo(User::class, 'created_by');
     }
+    
+    public function tenants()
+    {
+        return $this->belongsToMany(Tenant::class);
+    }
+
+    public function taskTemplates()
+    {
+        return $this->hasMany(TaskTemplate::class);
+    }
 }

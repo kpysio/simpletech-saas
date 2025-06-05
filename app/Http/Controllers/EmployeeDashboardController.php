@@ -13,9 +13,8 @@ class EmployeeDashboardController extends Controller
         return view('employee.dashboard');
     }
 
-    public function clients()
+    public function clients($department)
     {
-        $department = 'recruitment';
         $user = Auth::user();
         if (!$user) {
             return redirect()->route('login')->with('error', 'You must be logged in.');
@@ -25,7 +24,6 @@ class EmployeeDashboardController extends Controller
             return redirect()->route('employee.dashboard')->with('error', 'You are not assigned as an employee.');
         }
         $clients = $employee->clients()->where('department', $department)->get();
-        //$clients = $employee->clients()->where('department')->get();
         $tasks = $clients->flatMap(function ($client) {
             return $client->tasks;
         });

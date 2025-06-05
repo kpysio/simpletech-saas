@@ -11,4 +11,4 @@ Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [LoginController::class, 'login']);
 
 Route::middleware(['auth'])->get('/employee/dashboard', [\App\Http\Controllers\EmployeeDashboardController::class, 'index'])->name('employee.dashboard');
-Route::middleware(['auth'])->get('/employee/clients/{department}', [\App\Http\Controllers\EmployeeDashboardController::class, 'clients'])->name('employee.clients');
+Route::middleware(['auth'])->get('{department}/employee/clients', [\App\Http\Controllers\EmployeeDashboardController::class, 'clients'])->name('employee.clients');

@@ -31,7 +31,7 @@ class RecruitmentSeeder extends Seeder
            // Create Agency
         $agency = Agency::create([
             'name' => 'MultiPackage Agency',
-            'industry_type' => 'recruitment', // main type
+            'tenant_type' => 'recruitment', // main type
             'created_by' => $user_kpys->id, // will update after admin user is created
         ]);
 
@@ -101,54 +101,20 @@ class RecruitmentSeeder extends Seeder
             }
         }
 
-        /*
-        // Create a user to be the agency creator
-        // $user = User::factory()->create([
-        //     'name' => 'Agency Owner',
-        //     'email' => 'owner@agency.com',
-        // ]);
+             // Create or fetch the tenant (e.g., accounting)
+        $tenant = \App\Models\Tenant::firstOrCreate(['type' => 'recruitment']);
 
-         $adminRole = Role::where('name', 'Admin')->first();
-         $user->roles()->attach($adminRole);
+        // Attach tenant to agency (many-to-many)
+        $agency->tenants()->syncWithoutDetaching([$tenant->id]);
 
-        $agency = Agency::create([
-            'name' => 'Recruitment Pro',
-            'industry_type' => 'recruitment',
-            'created_by' => $user->id,
+        // Create a task template for an agency and tenant
+        $taskTemplate = \App\Models\TaskTemplate::create([
+            'agency_id' => $agency->id,
+            'tenant_id' => $tenant->id,
+            'title' => 'Job Application',
+            'category' => 'Recruitment',
+            'description' => 'Prepare Job Application for the client.',
         ]);
 
-        $branch = $agency->branches()->create([
-            'name' => 'Main Branch',
-        ]);
-
-        $employees = Employee::factory()->create([
-            'branch_id' => $branch->id,
-        ]);
-
-        $categories = ['Java', 'PHP', 'Nurse', 'Cleaner'];
-
-        $recruiterRole = Role::where('name', 'Recruiter')->first();
-        foreach ($employees->take(3) as $recruiter) {
-            $recruiterUser = $recruiter->user;
-            if ($recruiterUser) {
-                $recruiterUser->roles()->attach($recruiterRole);
-            }
-            for ($j = 0; $j < 3; $j++) {
-                $client = $recruiter->clients()->create([
-                    'name' => "Company {$j}",
-                    'department' => ['IT', 'Healthcare'][rand(0, 1)],
-                ]);
-
-                foreach (range(1, 2) as $k) {
-                    $client->tasks()->create([
-                        'title' => ['Java Developer', 'PHP Dev', 'Nurse'][rand(0, 2)],
-                        'category' => $categories[rand(0, 3)],
-                        'due_date' => now()->addDays(rand(5, 15)),
-                        'status' => 'open'
-                    ]);
-                }
-            }
-    }
-*/
     }
 }

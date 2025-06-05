@@ -30,7 +30,7 @@ class CrmSeeder extends Seeder
 
         $agency = Agency::create([
             'name' => 'CRM Solutions',
-            'industry_type' => 'crm',
+            'tenant_type' => 'crm',
             'created_by' => $user->id,
         ]);
 
@@ -66,5 +66,20 @@ class CrmSeeder extends Seeder
                 }
             }
         }
+
+                   // Create or fetch the tenant (e.g., accounting)
+        $tenant = \App\Models\Tenant::firstOrCreate(['type' => 'crm']);
+
+        // Attach tenant to agency (many-to-many)
+        $agency->tenants()->syncWithoutDetaching([$tenant->id]);
+
+        // Create a task template for an agency and tenant
+        $taskTemplate = \App\Models\TaskTemplate::create([
+            'agency_id' => $agency->id,
+            'tenant_id' => $tenant->id,
+            'title' => 'CRM Management',
+            'category' => 'CRM',
+            'description' => 'Prepare Lead management for the client.',
+        ]);
     }
 }
