@@ -33,14 +33,14 @@ class UserSeeder extends Seeder
             'password' => Hash::make('password'),
             'agency_id' => $agency->id,
         ]);
-        $adminRole = Role::where('name', 'Admin')->first();
+        $adminRole = Role::where('name', 'agency_admin')->first();
         $adminUser->roles()->attach($adminRole);
         $agency->created_by = $adminUser->id;
         $agency->save();
 
         // Recruitment Package
         $recruitmentBranch = $agency->branches()->create(['name' => 'Recruitment Branch']);
-        $managerRole = Role::where('name', 'Manager')->first();
+        $managerRole = Role::where('name', 'agency_manager')->first();
         $recEmployees = [];
         foreach (['rec_emp_1', 'rec_emp_2', 'rec_emp_3'] as $empName) {
             $user = User::create([

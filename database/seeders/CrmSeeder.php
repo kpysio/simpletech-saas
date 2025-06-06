@@ -25,7 +25,7 @@ class CrmSeeder extends Seeder
             'email' => 'owner@crm.com',
         ]);
 
-        $adminRole = Role::where('name', 'Admin')->first();
+        $adminRole = Role::where('name', 'agency_admin')->first();
         $user->roles()->attach($adminRole);
 
         $agency = Agency::create([

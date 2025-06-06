@@ -16,6 +16,8 @@ php artisan make:model TaskTemplate
 
 php artisan migrate:fresh
 php artisan db:seed
+php artisan db:seed --class=AccountingSeeder
+php artisan migrate:fresh --seed
 
 ## About Laravel
 

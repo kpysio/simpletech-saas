@@ -44,14 +44,14 @@ class AccountingSeeder extends Seeder
             'password' => Hash::make('password'),
             'agency_id' => $agency->id,
         ]);
-        $adminRole = Role::where('name', 'Admin')->first();
+        $adminRole = Role::where('name', 'agency_admin')->first();
         $adminUser->roles()->attach($adminRole);
         $agency->created_by = $adminUser->id;
         $agency->save();
 
         // Recruitment Package
         $recruitmentBranch = $agency->branches()->create(['name' => 'Finance Branch']);
-        $managerRole = Role::where('name', 'Manager')->first();
+        $managerRole = Role::where('name', 'agency_manager')->first();
         $recEmployees = [];
         foreach (['acc_emp_1', 'acc_emp_2', 'acc_emp_3'] as $empName) {
             $user = User::factory()->create([
